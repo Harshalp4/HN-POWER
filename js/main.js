@@ -382,7 +382,49 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // ============================================
-  // 12. SERVICE NAV ACTIVE STATE ON SCROLL
+  // 12. HERO VIDEO - PAUSE WHEN OUT OF VIEW
+  // ============================================
+  var heroVideo = document.querySelector('.hero__video');
+  if (heroVideo) {
+    // Force play — needed on iOS/mobile where autoplay can be blocked
+    function tryPlayVideo() {
+      if (heroVideo.paused) {
+        var playPromise = heroVideo.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(function () {
+            // Autoplay blocked — retry on first user interaction
+            ['touchstart', 'scroll', 'click'].forEach(function (evt) {
+              document.addEventListener(evt, function playOnce() {
+                heroVideo.play();
+                document.removeEventListener(evt, playOnce);
+              }, { once: true, passive: true });
+            });
+          });
+        }
+      }
+    }
+
+    // Try immediately
+    tryPlayVideo();
+
+    // Also try after a short delay (some browsers need DOM to settle)
+    setTimeout(tryPlayVideo, 500);
+
+    // Pause when out of view to save battery
+    var videoObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          heroVideo.play();
+        } else {
+          heroVideo.pause();
+        }
+      });
+    }, { threshold: 0.15 });
+    videoObserver.observe(heroVideo);
+  }
+
+  // ============================================
+  // 13. SERVICE NAV ACTIVE STATE ON SCROLL
   // ============================================
   var serviceNavLinks = document.querySelectorAll('.service-nav__link');
   var serviceSections = document.querySelectorAll('.service-detail');
