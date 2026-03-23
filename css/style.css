@@ -1714,8 +1714,8 @@ p + p { margin-top: var(--space-4); }
 }
 
 .team-card__photo {
-  width: 120px;
-  height: 120px;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
   margin: 0 auto var(--space-4);
